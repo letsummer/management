@@ -1,36 +1,32 @@
 import logo from './logo.svg';
 import Customer from "./components/Customer";
+import { useEffect, useState } from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 // import './App.css';
 
-const customer = [
-  {
-  'id': 1,
-  'img': 'https://picsum.photos/64',
-  'name': '홍길동',
-  'birth': '961222',
-  'gender': '남자',
-  'job': '대학생'
-  },
-  {
-  'id': 2,
-  'img': 'https://picsum.photos/64',
-  'name': '나동빈',
-  'birth': '961222',
-  'gender': '남자',
-  'job': '강사'
-  },
-  {
-  'id': 3,
-  'img': 'https://picsum.photos/64',
-  'name': '김산타',
-  'birth': '231224',
-  'gender': '여자',
-  'job': '산타'
-  },
-];
 
 function App() {
+
+  const [customers, setCustomers] = useState([]);
+
+  const getCustomers = async () => {
+    const response = await(
+      await fetch('http://localhost:5000/api/customers')
+    ).json();
+    // console.log(`response: `, response);
+    return response;
+  };
+
+  useEffect(() => {
+    getCustomers()
+    .then((data) => setCustomers(data));
+  },[]);
+  
+  // customers.map(c => {
+  //   console.log(`c: `, c.id);
+  // })
+  
+  
   return (
     <div className="App">
       <Table>
@@ -45,16 +41,20 @@ function App() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customer.map(c=>
-          <Customer
-            key={c.id}
-            id={c.id}
-            name={c.name}
-            img={c.img}
-            birth={c.birth}
-            gender={c.gender}
-            job={c.job}
-          />)}
+          { customers?
+            customers.map(c => 
+              <Customer
+                key={c.id}
+                id={c.id}
+                name={c.name}
+                img={c.img}
+                birth={c.birth}
+                gender={c.gender}
+                job={c.job}
+              />
+            ) :""
+          }
+          
         </TableBody>
       </Table>
     </div>
